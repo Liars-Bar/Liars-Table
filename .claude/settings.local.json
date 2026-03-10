@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npx next build)",
+      "Bash(xargs grep -l \"abi\\\\|ABI\")",
+      "Bash(python3:*)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\(''fs''\\).readFileSync\\(''/dev/stdin'',''utf8''\\)\\);d.abi.filter\\(x=>x.name===''gameCount''||x.name===''nextGameId''||x.name===''totalGames''\\).forEach\\(x=>console.log\\(JSON.stringify\\(x,null,2\\)\\)\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\(''fs''\\).readFileSync\\(''out/LiarsBar.sol/LiarsBar.json'',''utf8''\\)\\);d.abi.filter\\(x=>x.type===''function''&&x.inputs.length===0\\).forEach\\(x=>console.log\\(x.name\\)\\)\")",
+      "Bash(npx tsc --noEmit)"
+    ]
+  }
+}

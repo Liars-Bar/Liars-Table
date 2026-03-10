@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-navy-900: #020B20;
+  --color-navy-800: #0a1530;
+  --color-navy-700: #143E94;
+  --color-navy-600: #1a4fba;
+
+  --color-blue-600: #2a5fd4;
+  --color-blue-500: #3673F5;
+  --color-blue-400: #5a8ff7;
+  --color-blue-300: #8ab4f8;
+
+  --color-cream: #e8edf5;
+  --color-smoke: #8a9ab0;
+
+  --font-display: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+}
+
+body {
+  background: radial-gradient(
+      ellipse at 50% 30%,
+      rgba(54, 115, 245, 0.15) 0%,
+      rgba(2, 11, 32, 1) 70%
+    ),
+    var(--color-navy-900);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+@layer components {
+  .card-glow {
+    box-shadow:
+      0 0 20px rgba(54, 115, 245, 0.15),
+      inset 0 1px 0 rgba(54, 115, 245, 0.1);
+  }
+
+  .blue-border {
+    border: 1px solid rgba(54, 115, 245, 0.3);
+  }
+
+  .felt-table {
+    background: radial-gradient(ellipse at 50% 40%, #1a5c3a 0%, #0d3321 70%, #091f15 100%);
+    box-shadow:
+      inset 0 0 80px rgba(0, 0, 0, 0.6),
+      0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-back {
+    background: linear-gradient(135deg, #1a3a8a 0%, #0d2157 100%);
+    border: 2px solid rgba(54, 115, 245, 0.4);
+  }
+
+  .card-front {
+    background: linear-gradient(135deg, #f5f0e8 0%, #e8e0d0 100%);
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    color: #1a1a2e;
+  }
+
+  .card-selected {
+    transform: translateY(-12px);
+    box-shadow: 0 0 20px rgba(54, 115, 245, 0.5);
+  }
+
+  .card-disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .seat-active {
+    box-shadow:
+      0 0 15px rgba(54, 115, 245, 0.4),
+      0 0 30px rgba(54, 115, 245, 0.2);
+  }
+}
