@@ -11,7 +11,7 @@ export default function TablePage({
   const { id } = use(params);
 
   return (
-    <div className="min-h-[calc(100vh-130px)] flex items-start justify-center py-4">
+    <div className="h-[calc(100vh-57px)] overflow-hidden">
       <GameTable gameId={id} />
     </div>
   );

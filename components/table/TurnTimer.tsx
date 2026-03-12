@@ -9,12 +9,14 @@ interface TurnTimerProps {
   turnDeadline: bigint;
   gameId: bigint;
   isActive: boolean;
+  showForceTimeout?: boolean;
 }
 
 export default function TurnTimer({
   turnDeadline,
   gameId,
   isActive,
+  showForceTimeout = true,
 }: TurnTimerProps) {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const { writeContract, isPending } = useWriteContract();
@@ -60,7 +62,7 @@ export default function TurnTimer({
       <div className={`font-mono text-lg font-bold ${colorClass}`}>
         {timeStr}
       </div>
-      {canForceTimeout && (
+      {showForceTimeout && canForceTimeout && (
         <button
           onClick={handleForceTimeout}
           disabled={isPending}

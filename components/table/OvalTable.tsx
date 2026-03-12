@@ -63,7 +63,8 @@ export default function OvalTable({
   })();
 
   const playerCount = reorderedPlayers.length;
-  const positions = SEAT_POSITIONS[playerCount] ?? SEAT_POSITIONS[2];
+  const positionKey = Math.max(2, playerCount) as 2 | 3 | 4 | 5;
+  const positions = SEAT_POSITIONS[positionKey] ?? SEAT_POSITIONS[2];
 
   return (
     <div className="relative w-full max-w-4xl aspect-[4/3] mx-auto">

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="incoGrad" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5a8ff7"/>
+      <stop offset="100%" stop-color="#2a5fd4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Left card -->
+  <rect x="8" y="10" width="24" height="34" rx="3" fill="#0d2157" stroke="#3673F5" stroke-width="1.2" transform="rotate(-12 20 27)"/>
+  <text x="20" y="30" text-anchor="middle" font-size="12" fill="#3673F5" transform="rotate(-12 20 27)">♠</text>
+
+  <!-- Right card -->
+  <rect x="32" y="10" width="24" height="34" rx="3" fill="#0d2157" stroke="#3673F5" stroke-width="1.2" transform="rotate(12 44 27)"/>
+  <text x="44" y="30" text-anchor="middle" font-size="12" fill="#e53e3e" transform="rotate(12 44 27)">♦</text>
+
+  <!-- Inco circle logo -->
+  <circle cx="32" cy="34" r="16" fill="url(#incoGrad)"/>
+
+  <!-- Three diagonal white bars -->
+  <rect x="23" y="26" width="3.5" height="14" rx="1.5" fill="white" transform="rotate(-20 24.75 33)"/>
+  <rect x="30.25" y="26" width="3.5" height="14" rx="1.5" fill="white" transform="rotate(-20 32 33)"/>
+  <rect x="37.5" y="26" width="3.5" height="14" rx="1.5" fill="white" transform="rotate(-20 39.25 33)"/>
+</svg>

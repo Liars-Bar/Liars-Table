@@ -1,6 +1,7 @@
 "use client";
 
 import { CardType, CARD_SYMBOLS } from "@/types/game";
+import { ShieldLockIcon } from "@/components/icons/ShieldLockIcon";
 
 interface CardFaceProps {
   faceUp?: boolean;
@@ -51,7 +52,7 @@ export default function CardFace({
         onClick={onClick}
       >
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-blue-300 text-lg">{"\u2660"}</span>
+          <ShieldLockIcon size={24} />
           {slot !== undefined && (
             <span className="text-blue-400/60 text-[10px]">#{slot + 1}</span>
           )}

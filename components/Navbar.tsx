@@ -3,14 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ShieldLockIcon } from "@/components/icons/ShieldLockIcon";
+import { useTableNavInfo } from "@/hooks/useTableNavInfo";
+import TableNavInfo from "@/components/table/TableNavInfo";
 
 export function Navbar() {
   const pathname = usePathname();
   const showBack = pathname !== "/";
+  const isTablePage = /^\/table\/\d+/.test(pathname);
+  const tableNavData = useTableNavInfo();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-navy-800/80 backdrop-blur-sm border-b border-blue-600/30">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <div className="max-w-[1600px] mx-auto flex items-center justify-between px-6 py-3">
+        {/* Left: Back + Logo */}
         <div className="flex items-center gap-4">
           {showBack && (
             <Link
@@ -22,13 +28,24 @@ export function Navbar() {
             </Link>
           )}
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-blue-500 text-2xl">♠</span>
+            <ShieldLockIcon size={28} />
             <span className="font-display text-blue-500 text-xl tracking-wide uppercase">
               Liars Table
             </span>
           </Link>
         </div>
 
+        {/* Center: Table context info (only on table pages) */}
+        {isTablePage && tableNavData.gameId && (
+          <TableNavInfo
+            gameId={tableNavData.gameId}
+            stakeAmount={tableNavData.stakeAmount}
+            turnDeadline={tableNavData.turnDeadline}
+            isRoundActive={tableNavData.isRoundActive}
+          />
+        )}
+
+        {/* Right: Nav links + Wallet */}
         <div className="flex items-center gap-3">
           {!showBack && (
             <>
@@ -46,7 +63,11 @@ export function Navbar() {
               </Link>
             </>
           )}
-          <ConnectButton />
+          <ConnectButton
+            showBalance={false}
+            accountStatus={isTablePage ? "avatar" : "full"}
+            chainStatus={isTablePage ? "none" : "full"}
+          />
         </div>
       </div>
     </nav>

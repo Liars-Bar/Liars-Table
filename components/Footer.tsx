@@ -1,3 +1,5 @@
+import { ShieldLockIcon } from "@/components/icons/ShieldLockIcon";
+
 export function Footer() {
   return (
     <footer className="w-full bg-navy-800/50 border-t border-blue-600/20">
@@ -5,7 +7,8 @@ export function Footer() {
         <p className="text-smoke text-sm">
           &copy; 2025 Liars Table
         </p>
-        <p className="text-smoke text-sm">
+        <p className="text-smoke text-sm flex items-center gap-1.5">
+          <ShieldLockIcon size={16} />
           Powered by{" "}
           <span className="text-blue-500 font-medium">Inco</span> FHE
         </p>

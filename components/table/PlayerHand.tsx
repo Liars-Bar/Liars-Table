@@ -1,9 +1,11 @@
 "use client";
 
+import { CardType } from "@/types/game";
 import CardFace from "./CardFace";
 
 interface PlayerHandProps {
   cardCount: number;
+  cardTypes: (CardType | null)[];
   selectedSlots: Set<number>;
   onToggleSlot: (slot: number) => void;
   canSelect: boolean;
@@ -13,6 +15,7 @@ const MAX_HAND_SLOTS = 5;
 
 export default function PlayerHand({
   cardCount,
+  cardTypes,
   selectedSlots,
   onToggleSlot,
   canSelect,
@@ -22,6 +25,8 @@ export default function PlayerHand({
       {Array.from({ length: MAX_HAND_SLOTS }, (_, i) => {
         const isActive = i < cardCount;
         const isSelected = selectedSlots.has(i);
+        const cardType = cardTypes[i] ?? null;
+        const faceUp = isActive && cardType !== null;
 
         return (
           <div
@@ -32,7 +37,8 @@ export default function PlayerHand({
             }}
           >
             <CardFace
-              faceUp={false}
+              faceUp={faceUp}
+              type={cardType ?? undefined}
               selected={isSelected}
               disabled={!isActive}
               slot={i}

@@ -1,50 +1,59 @@
 "use client";
 
+import { useCallback } from "react";
 import { useReadContract, useAccount } from "wagmi";
 import { CONTRACT_ADDRESS, LIARS_BAR_ABI } from "@/config/wagmi";
 import { GamePhase } from "@/types/game";
 import type { GameInfo, LastPlay, PlayerInfo } from "@/types/game";
 
-const POLL_INTERVAL = 3000;
+// Fallback poll interval — events drive refetches, this is just a safety net
+const FALLBACK_POLL = 30_000;
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export function useGameState(gameId: bigint) {
   const { address } = useAccount();
 
-  const { data: rawGameInfo } = useReadContract({
+  const { data: rawGameInfo, refetch: refetchGameInfo } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LIARS_BAR_ABI,
     functionName: "getGameInfo",
     args: [gameId],
-    query: { refetchInterval: POLL_INTERVAL },
+    query: { refetchInterval: FALLBACK_POLL },
   });
 
-  const { data: rawPlayers } = useReadContract({
+  const { data: rawPlayers, refetch: refetchPlayers } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LIARS_BAR_ABI,
     functionName: "getPlayers",
     args: [gameId],
-    query: { refetchInterval: POLL_INTERVAL },
+    query: { refetchInterval: FALLBACK_POLL },
   });
 
-  const { data: rawLastPlay } = useReadContract({
+  const { data: rawLastPlay, refetch: refetchLastPlay } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LIARS_BAR_ABI,
     functionName: "getLastPlay",
     args: [gameId],
-    query: { refetchInterval: POLL_INTERVAL },
+    query: { refetchInterval: FALLBACK_POLL },
   });
 
-  const { data: rawMyInfo } = useReadContract({
+  const { data: rawMyInfo, refetch: refetchMyInfo } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: LIARS_BAR_ABI,
     functionName: "getPlayerInfo",
     args: address ? [gameId, address] : undefined,
     query: {
-      refetchInterval: POLL_INTERVAL,
+      refetchInterval: FALLBACK_POLL,
       enabled: !!address,
     },
   });
+
+  const refetchAll = useCallback(() => {
+    refetchGameInfo();
+    refetchPlayers();
+    refetchLastPlay();
+    refetchMyInfo();
+  }, [refetchGameInfo, refetchPlayers, refetchLastPlay, refetchMyInfo]);
 
   // Parse game info
   const gameInfo: GameInfo | null = rawGameInfo
@@ -84,6 +93,7 @@ export function useGameState(gameId: bigint) {
         alive: (rawMyInfo as readonly unknown[])[0] as boolean,
         cardCount: Number((rawMyInfo as readonly unknown[])[1]),
         isCurrentTurn: (rawMyInfo as readonly unknown[])[2] as boolean,
+        cardTypes: [],
       }
     : null;
 
@@ -99,5 +109,6 @@ export function useGameState(gameId: bigint) {
     myInfo,
     address,
     isPlayer,
+    refetchAll,
   };
 }

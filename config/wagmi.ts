@@ -1,12 +1,20 @@
-"use client";
-
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { baseSepolia } from "wagmi/chains";
+import { http, webSocket, fallback } from "viem";
+
+const wsUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_WS_RPC;
+const httpUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC;
 
 export const config = getDefaultConfig({
   appName: "Liars Table",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID_HERE",
   chains: [baseSepolia],
+  transports: {
+    [baseSepolia.id]: fallback([
+      ...(wsUrl ? [webSocket(wsUrl)] : []),
+      http(httpUrl),
+    ]),
+  },
   ssr: true,
 });
 
@@ -143,6 +151,19 @@ export const LIARS_BAR_ABI = [
       { name: "alive", type: "bool" },
       { name: "cards", type: "uint8" },
       { name: "isCurrentTurn", type: "bool" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getMyHand",
+    inputs: [
+      { name: "gameId", type: "uint256" },
+      { name: "player", type: "address" },
+    ],
+    outputs: [
+      { name: "cards", type: "uint256[10]" },
+      { name: "active", type: "bool[10]" },
     ],
     stateMutability: "view",
   },

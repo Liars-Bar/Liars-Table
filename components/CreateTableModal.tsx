@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   useWriteContract,
@@ -53,14 +53,29 @@ export function CreateTableModal({ onClose }: { onClose: () => void }) {
     isPending: isCreatePending,
   } = useWriteContract();
 
-  const { isSuccess: isCreateConfirmed, data: createReceipt } =
+  const { isSuccess: isCreateConfirmed } =
     useWaitForTransactionReceipt({
       hash: createTxHash,
     });
 
+  // Read nextGameId to determine the just-created game ID
+  const { data: nextGameId, refetch: refetchNextGameId } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: LIARS_BAR_ABI,
+    functionName: "nextGameId",
+    query: { enabled: false },
+  });
+
+  // Guard refs to prevent effects from firing more than once
+  const didCreateRef = useRef(false);
+  const didNavigateRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   // After approve confirmed → create game
   useEffect(() => {
-    if (isApproveConfirmed && step === "approving") {
+    if (isApproveConfirmed && step === "approving" && !didCreateRef.current) {
+      didCreateRef.current = true;
       setStep("creating");
       writeCreate({
         address: CONTRACT_ADDRESS,
@@ -71,20 +86,22 @@ export function CreateTableModal({ onClose }: { onClose: () => void }) {
     }
   }, [isApproveConfirmed, step, stakeAmount, writeCreate]);
 
-  // After create confirmed → navigate to lobby
+  // After create confirmed → fetch nextGameId
   useEffect(() => {
     if (isCreateConfirmed && step === "creating") {
-      let gameIdStr = "0";
-      if (createReceipt?.logs?.[0]) {
-        const gameIdHex = createReceipt.logs[0].topics?.[1];
-        if (gameIdHex) {
-          gameIdStr = String(BigInt(gameIdHex));
-        }
-      }
-      onClose();
-      router.push(`/lobby/${gameIdStr}`);
+      refetchNextGameId();
     }
-  }, [isCreateConfirmed, step, createReceipt, onClose, router]);
+  }, [isCreateConfirmed, step, refetchNextGameId]);
+
+  // Once nextGameId is available → navigate to lobby
+  useEffect(() => {
+    if (isCreateConfirmed && step === "creating" && nextGameId !== undefined && !didNavigateRef.current) {
+      didNavigateRef.current = true;
+      const gameId = (nextGameId as bigint) - BigInt(1);
+      onCloseRef.current();
+      router.push(`/lobby/${String(gameId)}`);
+    }
+  }, [nextGameId, isCreateConfirmed, step, router]);
 
   const handleProceed = () => {
     if (!isConnected || !address) return;

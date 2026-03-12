@@ -50,4 +50,12 @@ export interface PlayerInfo {
   alive: boolean;
   cardCount: number;
   isCurrentTurn: boolean;
+  cardTypes: (CardType | null)[];
+}
+
+export interface EventLogEntry {
+  id: number;
+  timestamp: number;
+  message: string;
+  type: "info" | "action" | "challenge" | "elimination" | "system";
 }

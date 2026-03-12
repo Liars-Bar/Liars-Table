@@ -1,5 +1,7 @@
 "use client";
 
+import { ShieldLockIcon } from "@/components/icons/ShieldLockIcon";
+
 interface PlayerSeatProps {
   address: string;
   isYou: boolean;
@@ -40,7 +42,7 @@ export default function PlayerSeat({
         `}
       >
         {alive ? (
-          <span className="text-2xl">{"\u2660"}</span>
+          <ShieldLockIcon size={24} />
         ) : (
           <span className="text-2xl">{"💀"}</span>
         )}
