@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { motion } from "motion/react";
 import { CARD_LABELS, CARD_SYMBOLS } from "@/types/game";
 import type { GameInfo, LastPlay, EventLogEntry } from "@/types/game";
 
@@ -17,9 +18,9 @@ function truncateAddress(addr: string) {
 
 const LOG_TYPE_COLORS: Record<EventLogEntry["type"], string> = {
   action: "text-cream",
-  challenge: "text-red-400",
-  elimination: "text-red-300",
-  system: "text-blue-400",
+  challenge: "text-[#e0384a]",
+  elimination: "text-[#e0384a] font-semibold",
+  system: "text-cipher",
   info: "text-smoke",
 };
 
@@ -37,11 +38,11 @@ export default function SidePanel({
   const firedCount = gameInfo.playerCount - gameInfo.aliveCount;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-navy-900/40">
       {/* STATS SECTION */}
-      <div className="p-4 border-b border-blue-600/20 space-y-4 shrink-0">
-        <h2 className="text-smoke text-[10px] uppercase tracking-widest font-semibold">
-          Game Stats
+      <div className="p-4 border-b border-brass/15 space-y-4 shrink-0">
+        <h2 className="text-brass flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold">
+          <span className="h-px w-4 bg-brass/50" /> Game Stats
         </h2>
 
         {/* Table Cards (current claim type) */}
@@ -70,7 +71,7 @@ export default function SidePanel({
 
         {/* Bullet Remains (revolver chambers) */}
         <div>
-          <span className="text-smoke text-xs block mb-2">Bullet Remains</span>
+          <span className="text-smoke text-xs block mb-2">Chambers Fired</span>
           <div className="flex items-center gap-1.5">
             {Array.from({ length: 6 }, (_, i) => {
               const fired = i < firedCount;
@@ -80,7 +81,7 @@ export default function SidePanel({
                   title={fired ? "Fired" : "Live"}
                   className={`w-5 h-5 rounded-full border-2 transition-colors ${
                     fired
-                      ? "bg-red-500/80 border-red-400"
+                      ? "bg-[#b4212a] border-[#e0384a] shadow-[0_0_8px_rgba(180,33,42,0.6)]"
                       : "bg-navy-700/80 border-smoke/30"
                   }`}
                 />
@@ -122,8 +123,8 @@ export default function SidePanel({
 
       {/* EVENT LOG SECTION */}
       <div className="flex flex-col flex-1 min-h-0 p-4">
-        <h2 className="text-smoke text-[10px] uppercase tracking-widest font-semibold mb-3 shrink-0">
-          Event Log
+        <h2 className="text-brass flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold mb-3 shrink-0">
+          <span className="h-px w-4 bg-brass/50" /> Event Log
         </h2>
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
           {eventLog.length === 0 ? (
@@ -132,7 +133,13 @@ export default function SidePanel({
             </p>
           ) : (
             eventLog.map((entry) => (
-              <div key={entry.id} className="flex gap-2 items-start">
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.25 }}
+                className="flex gap-2 items-start"
+              >
                 <span className="text-smoke/40 text-[10px] font-mono mt-0.5 shrink-0">
                   {new Date(entry.timestamp).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -145,7 +152,7 @@ export default function SidePanel({
                 >
                   {entry.message}
                 </span>
-              </div>
+              </motion.div>
             ))
           )}
           <div ref={logEndRef} />

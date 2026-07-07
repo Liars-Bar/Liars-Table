@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import {
   useWriteContract,
@@ -134,13 +135,22 @@ export function CreateTableModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       {/* Backdrop */}
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="absolute inset-0 bg-navy-900/80 backdrop-blur-sm"
         onClick={!isProcessing ? onClose : undefined}
       />
 
       {/* Modal */}
-      <div className="relative bg-navy-800 blue-border rounded-xl p-8 card-glow w-full max-w-md">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        transition={{ type: "spring", stiffness: 300, damping: 26 }}
+        className="relative glass rounded-2xl p-8 w-full max-w-md"
+      >
         {/* Close button */}
         {!isProcessing && (
           <button
@@ -193,7 +203,9 @@ export function CreateTableModal({ onClose }: { onClose: () => void }) {
             </div>
 
             {/* Action button */}
-            <button
+            <motion.button
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleProceed}
               disabled={
                 !isConnected ||
@@ -203,7 +215,7 @@ export function CreateTableModal({ onClose }: { onClose: () => void }) {
                 !stakeInput ||
                 Number(stakeInput) < 1
               }
-              className="w-full bg-blue-500 text-navy-900 font-semibold py-3 rounded-lg hover:bg-blue-400 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-500 text-navy-900 font-semibold py-3 rounded-lg hover:brightness-110 transition-[filter] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_24px_-10px_rgba(212,165,72,0.8)]"
             >
               {!isConnected
                 ? "Connect Wallet"
@@ -212,8 +224,8 @@ export function CreateTableModal({ onClose }: { onClose: () => void }) {
                 : step === "creating" || isCreatePending
                 ? "Creating Table..."
                 : `Create Table — ${stakeInput || 0} USDC`}
-            </button>
-      </div>
+            </motion.button>
+      </motion.div>
     </div>
   );
 }

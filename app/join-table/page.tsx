@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import {
   useReadContract,
@@ -35,13 +36,19 @@ function OpenTableCard({
   isJoining: boolean;
 }) {
   return (
-    <div className="bg-navy-800 blue-border rounded-xl p-5 card-glow flex items-center justify-between gap-4">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -3 }}
+      transition={{ type: "spring", stiffness: 300, damping: 26 }}
+      className="glass rounded-2xl p-5 flex items-center justify-between gap-4"
+    >
       <div className="flex items-center gap-6">
         <div>
           <span className="text-smoke text-xs uppercase tracking-wider">
             Table
           </span>
-          <p className="font-display text-blue-500 text-xl">
+          <p className="font-display text-brass-gradient text-xl">
             #{game.gameId}
           </p>
         </div>
@@ -62,14 +69,16 @@ function OpenTableCard({
           </p>
         </div>
       </div>
-      <button
+      <motion.button
+        whileHover={isJoining ? undefined : { y: -2 }}
+        whileTap={isJoining ? undefined : { scale: 0.97 }}
         onClick={() => onJoin(game.gameId)}
         disabled={isJoining}
-        className="bg-blue-500 text-navy-900 font-semibold px-5 py-2.5 rounded-lg hover:bg-blue-400 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-blue-500 text-navy-900 font-semibold px-5 py-2.5 rounded-lg hover:brightness-110 transition-[filter] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_8px_20px_-8px_rgba(212,165,72,0.7)]"
       >
         {isJoining ? "Joining..." : "Join"}
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 }
 
@@ -277,7 +286,7 @@ export default function JoinTablePage() {
       <div className="flex flex-col items-center min-h-[calc(100vh-130px)] px-6 py-12">
         {/* Join by Table ID */}
         <div className="w-full max-w-2xl mb-12">
-          <h1 className="font-display text-blue-500 text-4xl mb-2 text-center">
+          <h1 className="font-display text-brass-gradient text-4xl mb-2 text-center">
             Join a Table
           </h1>
           <p className="text-smoke text-center mb-8">
@@ -312,7 +321,7 @@ export default function JoinTablePage() {
 
         {/* Open Tables List */}
         <div className="w-full max-w-2xl">
-          <h2 className="font-display text-blue-500 text-2xl mb-6">
+          <h2 className="font-display text-brass-gradient text-2xl mb-6">
             Open Tables
           </h2>
 

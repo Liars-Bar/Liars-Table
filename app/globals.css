@@ -1,28 +1,70 @@
 @import "tailwindcss";
 
+/*
+  ───────────────────────────────────────────────────────────
+  SALOON NOIR — Liar's Table design system
+  ───────────────────────────────────────────────────────────
+  The original palette used navy/blue token NAMES everywhere.
+  We keep those names and only re-map their VALUES, so every
+  existing `bg-navy-800`, `text-blue-500`, etc. re-skins to
+  Saloon Noir automatically — zero churn, zero broken markup.
+
+    room     #0E0A08  espresso-black   (navy-*)
+    brass    #D4A548  gold / primary   (blue-*)
+    felt     #1C5B3A  emerald baize
+    crimson  #B4212A  danger / call liar
+    cipher   #35E0C8  encrypted accent (privacy)
+    cream    #F1E9D8  text
+  ───────────────────────────────────────────────────────────
+*/
+
 @theme inline {
-  --color-navy-900: #020B20;
-  --color-navy-800: #0a1530;
-  --color-navy-700: #143E94;
-  --color-navy-600: #1a4fba;
+  /* espresso room + panels (was navy) */
+  --color-navy-900: #0e0a08;
+  --color-navy-800: #17100c;
+  --color-navy-700: #241811;
+  --color-navy-600: #3a2a1c;
 
-  --color-blue-600: #2a5fd4;
-  --color-blue-500: #3673F5;
-  --color-blue-400: #5a8ff7;
-  --color-blue-300: #8ab4f8;
+  /* brass accent (was blue) — primary CTAs + highlights */
+  --color-blue-600: #b4862f;
+  --color-blue-500: #d4a548;
+  --color-blue-400: #e0b968;
+  --color-blue-300: #ebd29a;
 
-  --color-cream: #e8edf5;
-  --color-smoke: #8a9ab0;
+  /* text */
+  --color-cream: #f1e9d8;
+  --color-smoke: #a69a88;
+
+  /* semantic Saloon Noir tokens (new) */
+  --color-brass: #d4a548;
+  --color-brass-bright: #f0c866;
+  --color-crimson: #b4212a;
+  --color-crimson-bright: #e0384a;
+  --color-cipher: #35e0c8;
+  --color-felt: #1c5b3a;
+  --color-felt-deep: #0d3321;
+  --color-ember: #ff9d4d;
 
   --font-display: "Playfair Display", serif;
   --font-body: "Inter", sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: radial-gradient(
-      ellipse at 50% 30%,
-      rgba(54, 115, 245, 0.15) 0%,
-      rgba(2, 11, 32, 1) 70%
+  background:
+    radial-gradient(
+      ellipse 90% 60% at 50% -10%,
+      rgba(212, 165, 72, 0.14) 0%,
+      rgba(212, 165, 72, 0.04) 34%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 50% 108%,
+      rgba(53, 224, 200, 0.06) 0%,
+      transparent 55%
     ),
     var(--color-navy-900);
   color: var(--color-cream);
@@ -30,48 +72,156 @@ body {
   min-height: 100vh;
 }
 
+/* Faint film-grain / smoke over the whole room for depth */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+}
+
 @layer components {
+  /* Brass glow used on cards / panels (was blue) */
   .card-glow {
     box-shadow:
-      0 0 20px rgba(54, 115, 245, 0.15),
-      inset 0 1px 0 rgba(54, 115, 245, 0.1);
+      0 0 24px rgba(212, 165, 72, 0.12),
+      inset 0 1px 0 rgba(240, 200, 102, 0.12);
   }
 
+  /* Hairline brass border (was blue) */
   .blue-border {
-    border: 1px solid rgba(54, 115, 245, 0.3);
+    border: 1px solid rgba(212, 165, 72, 0.26);
   }
 
-  .felt-table {
-    background: radial-gradient(ellipse at 50% 40%, #1a5c3a 0%, #0d3321 70%, #091f15 100%);
+  /* Reusable brass hairline (semantic alias) */
+  .brass-border {
+    border: 1px solid rgba(212, 165, 72, 0.26);
+  }
+
+  /* Frosted saloon-glass panel */
+  .glass {
+    background: linear-gradient(
+      160deg,
+      rgba(36, 24, 17, 0.72) 0%,
+      rgba(14, 10, 8, 0.82) 100%
+    );
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(212, 165, 72, 0.22);
     box-shadow:
-      inset 0 0 80px rgba(0, 0, 0, 0.6),
-      0 8px 32px rgba(0, 0, 0, 0.5);
+      0 24px 60px -20px rgba(0, 0, 0, 0.7),
+      inset 0 1px 0 rgba(240, 200, 102, 0.1);
   }
 
+  /* Emerald felt (fallback + secondary surfaces) */
+  .felt-table {
+    background:
+      radial-gradient(
+        ellipse at 50% 38%,
+        #26744a 0%,
+        var(--color-felt) 42%,
+        var(--color-felt-deep) 78%,
+        #071a12 100%
+      );
+    box-shadow:
+      inset 0 0 90px rgba(0, 0, 0, 0.65),
+      inset 0 2px 0 rgba(240, 200, 102, 0.06),
+      0 20px 50px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Encrypted card back — the privacy story lives here (cipher-cyan) */
   .card-back {
-    background: linear-gradient(135deg, #1a3a8a 0%, #0d2157 100%);
-    border: 2px solid rgba(54, 115, 245, 0.4);
+    background:
+      radial-gradient(circle at 50% 32%, rgba(53, 224, 200, 0.16) 0%, transparent 55%),
+      linear-gradient(150deg, #10221f 0%, #0a1614 55%, #070f0d 100%);
+    border: 1.5px solid rgba(53, 224, 200, 0.42);
+    box-shadow:
+      0 0 14px rgba(53, 224, 200, 0.18),
+      inset 0 0 18px rgba(53, 224, 200, 0.08);
   }
 
+  /* Ivory card face */
   .card-front {
-    background: linear-gradient(135deg, #f5f0e8 0%, #e8e0d0 100%);
-    border: 2px solid rgba(0, 0, 0, 0.15);
-    color: #1a1a2e;
+    background: linear-gradient(150deg, #f7f1e4 0%, #eadfca 100%);
+    border: 1.5px solid rgba(180, 140, 60, 0.35);
+    color: #1a1310;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
   }
 
   .card-selected {
-    transform: translateY(-12px);
-    box-shadow: 0 0 20px rgba(54, 115, 245, 0.5);
+    transform: translateY(-14px);
+    box-shadow:
+      0 0 0 2px rgba(212, 165, 72, 0.9),
+      0 12px 26px rgba(212, 165, 72, 0.35);
   }
 
   .card-disabled {
-    opacity: 0.3;
+    opacity: 0.28;
     pointer-events: none;
   }
 
+  /* Active-turn seat halo (was blue) */
   .seat-active {
     box-shadow:
-      0 0 15px rgba(54, 115, 245, 0.4),
-      0 0 30px rgba(54, 115, 245, 0.2);
+      0 0 16px rgba(212, 165, 72, 0.5),
+      0 0 34px rgba(212, 165, 72, 0.22);
+  }
+
+  /* Brass wordmark / heading gradient */
+  .text-brass-gradient {
+    background: linear-gradient(180deg, #f4d898 0%, #d4a548 55%, #a9772a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Cipher (encrypted) text glow */
+  .text-cipher {
+    color: var(--color-cipher);
+    text-shadow: 0 0 10px rgba(53, 224, 200, 0.45);
+  }
+}
+
+/* Thin brass scrollbar (SidePanel event log) */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 165, 72, 0.35) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(212, 165, 72, 0.32);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Shared keyframes for motion accents */
+@keyframes ember-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translateY(-120px) scale(0.4); opacity: 0; }
+}
+@keyframes brass-sheen {
+  0% { background-position: -160% 0; }
+  100% { background-position: 260% 0; }
+}
+@keyframes cipher-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }

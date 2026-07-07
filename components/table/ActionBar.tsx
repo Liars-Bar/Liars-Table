@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther } from "viem";
 import { CONTRACT_ADDRESS, LIARS_BAR_ABI } from "@/config/wagmi";
@@ -74,25 +75,29 @@ export default function ActionBar({
   return (
     <div className="flex items-center justify-center gap-4">
       {/* Play Cards */}
-      <button
+      <motion.button
+        whileHover={!canPlay || isProcessing ? undefined : { y: -2 }}
+        whileTap={!canPlay || isProcessing ? undefined : { scale: 0.97 }}
         onClick={handlePlayCards}
         disabled={!canPlay || isProcessing}
-        className="bg-blue-500 text-navy-900 font-semibold px-6 py-3 rounded-xl hover:bg-blue-400 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+        className="bg-blue-500 text-navy-900 font-semibold px-6 py-3 rounded-xl hover:brightness-110 transition-[filter] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-sm shadow-[0_10px_24px_-10px_rgba(212,165,72,0.8)]"
       >
         {isPlayPending || isPlayConfirming
           ? "Playing..."
           : `Play ${selectedCount} Card${selectedCount !== 1 ? "s" : ""} as ${claimLabel}`}
-      </button>
+      </motion.button>
 
       {/* Call Liar */}
       {hasLastPlay && (
-        <button
+        <motion.button
+          whileHover={isProcessing ? undefined : { y: -2 }}
+          whileTap={isProcessing ? undefined : { scale: 0.97 }}
           onClick={handleCallLiar}
           disabled={isProcessing}
-          className="bg-red-500 text-white font-semibold px-6 py-3 rounded-xl hover:bg-red-400 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+          className="bg-[#b4212a] text-white font-semibold px-6 py-3 rounded-xl hover:brightness-110 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-sm shadow-[0_10px_24px_-10px_rgba(180,33,42,0.9)]"
         >
           {isLiarPending || isLiarConfirming ? "Calling..." : "Call Liar!"}
-        </button>
+        </motion.button>
       )}
     </div>
   );

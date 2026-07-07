@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useEffect } from "react";
+import { motion } from "motion/react";
 import { useReadContract, useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { useRouter } from "next/navigation";
 import { formatUnits, parseEther } from "viem";
@@ -94,12 +95,17 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
   }, [gameStarted, router, id]);
 
   const handleStart = () => {
+    // The Inco FHE deal fee scales with the number of cards dealt (≈ per
+    // player): a flat 0.005 covered 2-player games but under-funds 3+ players,
+    // leaving them stuck at "Dealing". We send per-player and the contract
+    // refunds any excess (it takes only what the deal needs).
+    const players = BigInt(Math.max(2, playerCount));
     writeStart({
       address: CONTRACT_ADDRESS,
       abi: LIARS_BAR_ABI,
       functionName: "startGame",
       args: [gameId],
-      value: parseEther("0.005"), // covers INCO FHE fees; excess is refunded
+      value: parseEther("0.005") * players, // 2p→0.01, 3p→0.015, 5p→0.025; excess refunded
     });
   };
 
@@ -126,11 +132,11 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-display text-blue-500 text-4xl mb-2">
+          <h1 className="font-display text-brass-gradient text-4xl mb-2">
             Table #{id}
           </h1>
           <p className="text-smoke text-lg">
-            Stake: {formatUnits(stakeAmount, 6)} USDC
+            Stake: <span className="text-cream font-semibold">{formatUnits(stakeAmount, 6)} USDC</span>
           </p>
         </div>
 
@@ -138,16 +144,18 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
 
         {/* Cancelled banner */}
         {gameCancelled && !isLeaveConfirmed && !isCancelConfirmed && (
-          <div className="bg-navy-800 blue-border rounded-xl p-6 card-glow text-center mb-6">
+          <div className="glass rounded-2xl p-6 text-center mb-6">
             <span className="text-4xl block mb-3">❌</span>
-            <h2 className="font-display text-blue-500 text-xl mb-2">Game Cancelled</h2>
+            <h2 className="font-display text-brass-gradient text-xl mb-2">Game Cancelled</h2>
             <p className="text-smoke text-sm mb-4">This table has been cancelled.</p>
-            <button
+            <motion.button
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => router.push("/")}
-              className="bg-blue-500 text-navy-900 font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-400 transition-colors cursor-pointer"
+              className="bg-blue-500 text-navy-900 font-semibold px-6 py-2.5 rounded-lg hover:brightness-110 transition-[filter] cursor-pointer shadow-[0_10px_24px_-10px_rgba(212,165,72,0.8)]"
             >
               Back to Lobby
-            </button>
+            </motion.button>
           </div>
         )}
 
@@ -155,7 +163,7 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
         {!gameCancelled && (
           <>
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="font-display text-blue-500 text-xl">Players</h2>
+              <h2 className="font-display text-brass-gradient text-xl">Players</h2>
               <span className="text-smoke text-sm">
                 {playerCount}/{MAX_PLAYERS}
               </span>
@@ -168,12 +176,15 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
                 const isHost = i === 0 && playerAddr;
 
                 return (
-                  <div
+                  <motion.div
                     key={i}
-                    className={`flex items-center justify-between rounded-xl px-5 py-4 blue-border transition-all ${
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: playerAddr ? 1 : 0.55, x: 0 }}
+                    transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 28 }}
+                    className={`flex items-center justify-between rounded-xl px-5 py-4 transition-all ${
                       playerAddr
-                        ? "bg-navy-800 card-glow"
-                        : "bg-navy-900/50 opacity-50"
+                        ? "glass"
+                        : "bg-navy-900/40 border border-dashed border-brass/15"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -194,11 +205,11 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
                       </div>
                     </div>
                     {isHost && (
-                      <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md font-semibold">
+                      <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md font-semibold border border-brass/25">
                         Host
                       </span>
                     )}
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -208,17 +219,19 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
               <div className="flex flex-col gap-3">
                 {isCreator ? (
                   <>
-                    <button
+                    <motion.button
+                      whileHover={playerCount < 2 || isStartPending ? undefined : { y: -2 }}
+                      whileTap={playerCount < 2 || isStartPending ? undefined : { scale: 0.98 }}
                       onClick={handleStart}
                       disabled={playerCount < 2 || isStartPending}
-                      className="w-full bg-blue-500 text-navy-900 font-semibold py-3 rounded-lg hover:bg-blue-400 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-blue-500 text-navy-900 font-semibold py-3 rounded-lg hover:brightness-110 transition-[filter] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_24px_-10px_rgba(212,165,72,0.8)]"
                     >
                       {isStartPending
                         ? "Starting..."
                         : playerCount < 2
                         ? "Need at least 2 players"
                         : "Start Game"}
-                    </button>
+                    </motion.button>
                     <button
                       onClick={handleCancel}
                       disabled={isCancelPending}

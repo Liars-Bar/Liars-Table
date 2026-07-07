@@ -24,8 +24,8 @@ export function ShieldLockIcon({
           y2="56"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#5a8ff7" />
-          <stop offset="100%" stopColor="#2a5fd4" />
+          <stop offset="0%" stopColor="#5eead4" />
+          <stop offset="100%" stopColor="#12a892" />
         </linearGradient>
       </defs>
 
@@ -36,8 +36,8 @@ export function ShieldLockIcon({
         width="24"
         height="34"
         rx="3"
-        fill="#0d2157"
-        stroke="#3673F5"
+        fill="#17100c"
+        stroke="#d4a548"
         strokeWidth="1.2"
         transform="rotate(-12 20 27)"
       />
@@ -47,7 +47,7 @@ export function ShieldLockIcon({
         y="30"
         textAnchor="middle"
         fontSize="12"
-        fill="#3673F5"
+        fill="#f1e9d8"
         transform="rotate(-12 20 27)"
       >
         ♠
@@ -60,8 +60,8 @@ export function ShieldLockIcon({
         width="24"
         height="34"
         rx="3"
-        fill="#0d2157"
-        stroke="#3673F5"
+        fill="#17100c"
+        stroke="#d4a548"
         strokeWidth="1.2"
         transform="rotate(12 44 27)"
       />
@@ -71,7 +71,7 @@ export function ShieldLockIcon({
         y="30"
         textAnchor="middle"
         fontSize="12"
-        fill="#e53e3e"
+        fill="#b4212a"
         transform="rotate(12 44 27)"
       >
         ♦

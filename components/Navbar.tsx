@@ -14,7 +14,7 @@ export function Navbar() {
   const tableNavData = useTableNavInfo();
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-navy-800/80 backdrop-blur-sm border-b border-blue-600/30">
+    <nav className="sticky top-0 z-50 w-full bg-navy-900/70 backdrop-blur-md border-b border-brass/20 shadow-[0_1px_0_rgba(212,165,72,0.12),0_8px_30px_-12px_rgba(0,0,0,0.8)]">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between px-6 py-3">
         {/* Left: Back + Logo */}
         <div className="flex items-center gap-4">
@@ -27,10 +27,16 @@ export function Navbar() {
               <span>Back</span>
             </Link>
           )}
-          <Link href="/" className="flex items-center gap-2">
-            <ShieldLockIcon size={28} />
-            <span className="font-display text-blue-500 text-xl tracking-wide uppercase">
-              Liars Table
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 transition-transform duration-200 hover:-translate-y-px"
+          >
+            <ShieldLockIcon
+              size={28}
+              className="drop-shadow-[0_0_10px_rgba(53,224,200,0.35)] transition-transform duration-300 group-hover:rotate-3"
+            />
+            <span className="font-display text-brass-gradient text-xl tracking-[0.16em] uppercase font-bold">
+              Liar&apos;s Table
             </span>
           </Link>
         </div>

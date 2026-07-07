@@ -71,7 +71,7 @@ export default function GameTable({ gameId }: GameTableProps) {
   return (
     <div className="flex h-full w-full">
       {/* LEFT COLUMN: table + hand + actions */}
-      <div className="flex flex-1 flex-col min-w-0 px-4 pt-3 pb-4 gap-3">
+      <div className="flex flex-1 flex-col min-w-0 px-2 pt-2 pb-3 gap-2">
         {/* Turn indicator */}
         {isRoundActive && (
           <div className="text-center shrink-0">

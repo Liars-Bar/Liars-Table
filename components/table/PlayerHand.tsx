@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { CardType } from "@/types/game";
 import CardFace from "./CardFace";
 
@@ -29,26 +30,36 @@ export default function PlayerHand({
         const faceUp = isActive && cardType !== null;
 
         return (
-          <div
+          <motion.div
             key={i}
-            className="transition-transform duration-200"
-            style={{
-              transform: `rotate(${(i - 2) * 5}deg) translateY(${Math.abs(i - 2) * 4}px)`,
+            initial={{ opacity: 0, y: 44, rotate: -10 }}
+            animate={{ opacity: 1, y: 0, rotate: 0 }}
+            transition={{
+              delay: i * 0.08,
+              type: "spring",
+              stiffness: 240,
+              damping: 22,
             }}
           >
-            <CardFace
-              faceUp={faceUp}
-              type={cardType ?? undefined}
-              selected={isSelected}
-              disabled={!isActive}
-              slot={i}
-              onClick={
-                isActive && canSelect
-                  ? () => onToggleSlot(i)
-                  : undefined
-              }
-            />
-          </div>
+            {/* inner div carries the static fan transform (kept off the
+                motion element so it never fights motion's transform) */}
+            <div
+              style={{
+                transform: `rotate(${(i - 2) * 5}deg) translateY(${Math.abs(i - 2) * 4}px)`,
+              }}
+            >
+              <CardFace
+                faceUp={faceUp}
+                type={cardType ?? undefined}
+                selected={isSelected}
+                disabled={!isActive}
+                slot={i}
+                onClick={
+                  isActive && canSelect ? () => onToggleSlot(i) : undefined
+                }
+              />
+            </div>
+          </motion.div>
         );
       })}
     </div>

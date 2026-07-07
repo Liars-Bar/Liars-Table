@@ -2,8 +2,8 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { baseSepolia } from "wagmi/chains";
 import { http, webSocket, fallback } from "viem";
 
-const wsUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_WS_RPC;
-const httpUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC;
+const wsUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_WS_RPC || "wss://base-sepolia.g.alchemy.com/v2/PTij7J6F8Yn9O9V6dqPvj";
+const httpUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || "https://base-sepolia.g.alchemy.com/v2/PTij7J6F8Yn9O9V6dqPvj";
 
 export const config = getDefaultConfig({
   appName: "Liars Table",

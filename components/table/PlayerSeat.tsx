@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { ShieldLockIcon } from "@/components/icons/ShieldLockIcon";
 
 interface PlayerSeatProps {
@@ -23,29 +24,47 @@ export default function PlayerSeat({
   cardCount,
   position,
 }: PlayerSeatProps) {
+  const activeTurn = isCurrentTurn && alive;
+
   return (
-    <div
+    <motion.div
       className="absolute z-10 flex flex-col items-center gap-1"
-      style={{
-        top: position.top,
-        left: position.left,
-        transform: position.transform,
-      }}
+      style={{ top: position.top, left: position.left, transform: position.transform }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: alive ? 1 : 0.45, scale: 1 }}
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
     >
-      {/* Avatar circle */}
-      <div
-        className={`
-          w-16 h-16 rounded-full flex items-center justify-center
-          bg-navy-800 blue-border transition-all duration-300
-          ${isCurrentTurn && alive ? "seat-active animate-pulse ring-2 ring-blue-500" : ""}
-          ${!alive ? "opacity-40" : ""}
-        `}
-      >
-        {alive ? (
-          <ShieldLockIcon size={24} />
-        ) : (
-          <span className="text-2xl">{"💀"}</span>
+      {/* Avatar */}
+      <div className="relative">
+        {/* pulsing brass halo on active turn */}
+        {activeTurn && (
+          <motion.span
+            className="absolute inset-0 rounded-full"
+            style={{ boxShadow: "0 0 0 2px rgba(212,165,72,0.9)" }}
+            animate={{
+              boxShadow: [
+                "0 0 0 2px rgba(212,165,72,0.9), 0 0 12px 2px rgba(212,165,72,0.35)",
+                "0 0 0 2px rgba(212,165,72,0.9), 0 0 26px 6px rgba(212,165,72,0.15)",
+                "0 0 0 2px rgba(212,165,72,0.9), 0 0 12px 2px rgba(212,165,72,0.35)",
+              ],
+            }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          />
         )}
+        <div
+          className={`
+            relative w-16 h-16 rounded-full flex items-center justify-center
+            bg-navy-800 blue-border transition-colors duration-300
+            ${activeTurn ? "seat-active" : ""}
+            ${!alive ? "grayscale" : ""}
+          `}
+        >
+          {alive ? (
+            <ShieldLockIcon size={24} className={isYou ? "drop-shadow-[0_0_8px_rgba(53,224,200,0.5)]" : ""} />
+          ) : (
+            <span className="text-2xl">💀</span>
+          )}
+        </div>
       </div>
 
       {/* Name + info */}
@@ -54,7 +73,7 @@ export default function PlayerSeat({
           {truncateAddress(address)}
         </span>
         {isYou && (
-          <span className="text-blue-400 text-[10px] font-semibold">
+          <span className="text-cipher text-[10px] font-semibold tracking-wide">
             (You)
           </span>
         )}
@@ -70,9 +89,11 @@ export default function PlayerSeat({
           </div>
         )}
         {!alive && (
-          <span className="text-red-400/70 text-[10px]">Eliminated</span>
+          <span className="text-[#e0384a]/80 text-[10px] font-semibold">
+            Eliminated
+          </span>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

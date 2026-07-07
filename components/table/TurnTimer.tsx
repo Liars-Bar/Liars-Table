@@ -42,8 +42,8 @@ export default function TurnTimer({
   const timeStr = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
   let colorClass = "text-cream";
-  if (secondsLeft < 15) colorClass = "text-red-500 animate-pulse";
-  else if (secondsLeft < 60) colorClass = "text-yellow-400";
+  if (secondsLeft < 15) colorClass = "text-[#e0384a] animate-pulse";
+  else if (secondsLeft < 60) colorClass = "text-[#f0c866]";
 
   const canForceTimeout = secondsLeft === 0;
 
@@ -66,7 +66,7 @@ export default function TurnTimer({
         <button
           onClick={handleForceTimeout}
           disabled={isPending}
-          className="bg-red-500/80 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-red-500 transition-colors cursor-pointer disabled:opacity-50"
+          className="bg-[#b4212a]/85 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-[#b4212a] transition-colors cursor-pointer disabled:opacity-50"
         >
           {isPending ? "Forcing..." : "Force Timeout"}
         </button>
