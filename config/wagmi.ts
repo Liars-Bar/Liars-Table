@@ -20,9 +20,8 @@ export const config = getDefaultConfig({
 
 // Inco v1 LiarsBar redeploy on Base Sepolia (verified). The old
 // 0x781b… deployment was bound to Inco's retired 0.7.x coprocessor and can no
-// longer decrypt/resolve. Override with NEXT_PUBLIC_CONTRACT_ADDRESS if needed.
-export const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
-  "0x0f655F0C1dc79cebFaD91135D3a4F31424ED1FA7") as `0x${string}`;
+// longer decrypt/resolve.
+export const CONTRACT_ADDRESS = "0x0f655F0C1dc79cebFaD91135D3a4F31424ED1FA7" as const;
 export const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as const;
 
 export const LIARS_BAR_ABI = [
