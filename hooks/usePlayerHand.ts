@@ -4,41 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useReadContract, useWalletClient } from "wagmi";
 import { CONTRACT_ADDRESS, LIARS_BAR_ABI } from "@/config/wagmi";
 import { CardType } from "@/types/game";
-import { Lightning } from "@inco/js/lite";
-import type { WalletClient } from "viem";
-
-const INCO_CHAIN_ID = 84532 as const;
-const INCO_PEPPER = "testnet" as const;
-
-/**
- * The @inco/js SDK hardcodes its host-chain RPC to the public
- * `https://sepolia.base.org`, which frequently times out when it reads the
- * verifier config (`incoVerifier()`) off the executor contract. If a reliable
- * RPC is configured, bind Inco to it via `Lightning.custom(...)`. Falls back to
- * the default `Lightning.latest(...)` on any error, so this can only help.
- */
-async function makeLightning() {
-  const rpc = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC;
-  if (rpc && rpc.startsWith("http")) {
-    try {
-      const dep = Lightning.latestDeployment(INCO_PEPPER, INCO_CHAIN_ID);
-      return await Lightning.custom({
-        executorAddress: dep.executorAddress,
-        chainId: dep.chainId,
-        covalidatorUrls: [
-          `https://${dep.executorAddress.toLowerCase()}.${dep.chainId}.${dep.pepper}.inco.org`,
-        ],
-        hostChainRpcUrl: rpc,
-      });
-    } catch (err) {
-      console.warn(
-        "[usePlayerHand] custom Inco RPC init failed; using default RPC",
-        err
-      );
-    }
-  }
-  return Lightning.latest(INCO_PEPPER, INCO_CHAIN_ID);
-}
+import { makeLightning } from "@/lib/inco";
 
 export function usePlayerHand(
   gameId: bigint,

@@ -1,44 +1,26 @@
 "use client";
 
-import { Lightning } from "@inco/js/lite";
+import { Lightning } from "@inco/lightning-js/lite";
 import { bytesToHex } from "viem";
-
-const INCO_CHAIN_ID = 84532 as const;
-const INCO_PEPPER = "testnet" as const;
 
 export const ZERO_HANDLE =
   "0x0000000000000000000000000000000000000000000000000000000000000000" as const;
 
 /**
- * Build a Lightning (Inco) client bound to a reliable host-chain RPC.
+ * Build a Lightning (Inco) client for the current Base Sepolia deployment.
  *
- * The @inco/js SDK otherwise hardcodes the host-chain RPC to the public
- * `https://sepolia.base.org`, which frequently times out reading the verifier
- * config off the executor contract. If a reliable RPC is configured we bind to
- * it via `Lightning.custom(...)`; on any error we fall back to the default
- * `Lightning.latest(...)`, so this can only help.
+ * Uses the v1 `@inco/lightning-js` factory (`baseSepoliaTestnet`). The old
+ * `@inco/js` 0.7.x SDK targeted a now-retired coprocessor deployment and 404s.
+ * We pass our own host-chain RPC (Alchemy) so the SDK doesn't fall back to the
+ * flaky public `sepolia.base.org`.
  *
- * NOTE: kept in sync with the identical helper in `hooks/usePlayerHand.ts`
- * (the proven hand-decrypt path is intentionally left untouched).
+ * NOTE: kept in sync with the identical helper in `hooks/usePlayerHand.ts`.
  */
 export async function makeLightning() {
   const rpc = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC;
-  if (rpc && rpc.startsWith("http")) {
-    try {
-      const dep = Lightning.latestDeployment(INCO_PEPPER, INCO_CHAIN_ID);
-      return await Lightning.custom({
-        executorAddress: dep.executorAddress,
-        chainId: dep.chainId,
-        covalidatorUrls: [
-          `https://${dep.executorAddress.toLowerCase()}.${dep.chainId}.${dep.pepper}.inco.org`,
-        ],
-        hostChainRpcUrl: rpc,
-      });
-    } catch (err) {
-      console.warn("[inco] custom RPC init failed; using default RPC", err);
-    }
-  }
-  return Lightning.latest(INCO_PEPPER, INCO_CHAIN_ID);
+  const opts =
+    rpc && rpc.startsWith("http") ? { hostChainRpcUrls: [rpc] } : undefined;
+  return Lightning.baseSepoliaTestnet(opts);
 }
 
 /** On-chain-submittable decryption attestation for a publicly-revealed handle. */

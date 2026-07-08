@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@inco/js": "^0.7.12",
+    "@inco/lightning-js": "^1.0.2",
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
