@@ -8,24 +8,24 @@ import OvalTable from "./OvalTable";
 import PlayerHand from "./PlayerHand";
 import ActionBar from "./ActionBar";
 import SidePanel from "./SidePanel";
+import ResolveBanner from "./ResolveBanner";
 import { usePlayerHand } from "@/hooks/usePlayerHand";
+import { useResolveGame } from "@/hooks/useResolveGame";
 
 interface GameTableProps {
   gameId: string;
 }
 
 export default function GameTable({ gameId }: GameTableProps) {
-  // Safe BigInt conversion
-  let id: bigint;
+  // Parse the id WITHOUT early-returning, so every hook below always runs in
+  // the same order (React rules-of-hooks). Invalid ids are handled at render.
+  let parsedId: bigint | null;
   try {
-    id = BigInt(gameId);
+    parsedId = BigInt(gameId);
   } catch {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-red-400 text-sm">Invalid table ID: {gameId}</p>
-      </div>
-    );
+    parsedId = null;
   }
+  const id = parsedId ?? BigInt(0);
 
   const { gameInfo, players, lastPlay, myInfo, address, isPlayer, refetchAll } =
     useGameState(id);
@@ -36,6 +36,12 @@ export default function GameTable({ gameId }: GameTableProps) {
 
   // Event-driven log — updated instantly via WebSocket contract events
   const eventLog = useGameEvents(id, address, refetchAll);
+
+  // Client-side keeper: the contract freezes at RoundStarting (phase 1) and
+  // ChallengeResolving (phase 3) until someone submits a covalidator-signed
+  // decryption attestation. This drives that automatically for players so the
+  // deal actually turns into a playable round.
+  const resolve = useResolveGame(id, gameInfo?.phase ?? -1, isPlayer);
 
   const handleToggleSlot = useCallback((slot: number) => {
     setSelectedSlots((prev) => {
@@ -52,6 +58,14 @@ export default function GameTable({ gameId }: GameTableProps) {
   const handleClearSelection = useCallback(() => {
     setSelectedSlots(new Set());
   }, []);
+
+  if (parsedId === null) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-red-400 text-sm">Invalid table ID: {gameId}</p>
+      </div>
+    );
+  }
 
   if (!gameInfo) {
     return (
@@ -72,6 +86,16 @@ export default function GameTable({ gameId }: GameTableProps) {
     <div className="flex h-full w-full">
       {/* LEFT COLUMN: table + hand + actions */}
       <div className="flex flex-1 flex-col min-w-0 px-2 pt-2 pb-3 gap-2">
+        {/* Round/challenge resolution status (Inco coprocessor) */}
+        <div className="shrink-0">
+          <ResolveBanner
+            status={resolve.state.status}
+            message={resolve.state.message}
+            error={resolve.state.error}
+            onRetry={resolve.retry}
+          />
+        </div>
+
         {/* Turn indicator */}
         {isRoundActive && (
           <div className="text-center shrink-0">

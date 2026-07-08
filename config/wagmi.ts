@@ -128,6 +128,128 @@ export const LIARS_BAR_ABI = [
     outputs: [],
     stateMutability: "nonpayable",
   },
+  // ===== Round/challenge resolution (permissionless, attestation-based) =====
+  // The game advances RoundStarting -> RoundInProgress (and resolves challenges)
+  // only when one of these is called with a covalidator-signed decryption
+  // attestation for the pending handle. Without them the game freezes after the
+  // deal. `DecryptionAttestation` == Solidity struct { bytes32 handle; bytes32 value; }.
+  {
+    type: "function",
+    name: "resolveRoundStart",
+    inputs: [
+      { name: "gameId", type: "uint256" },
+      {
+        name: "attestation",
+        type: "tuple",
+        components: [
+          { name: "handle", type: "bytes32" },
+          { name: "value", type: "bytes32" },
+        ],
+      },
+      { name: "signatures", type: "bytes[]" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "resolveChallenge",
+    inputs: [
+      { name: "gameId", type: "uint256" },
+      {
+        name: "bluffAttestation",
+        type: "tuple",
+        components: [
+          { name: "handle", type: "bytes32" },
+          { name: "value", type: "bytes32" },
+        ],
+      },
+      { name: "bluffSignatures", type: "bytes[]" },
+      {
+        name: "bulletAttestation",
+        type: "tuple",
+        components: [
+          { name: "handle", type: "bytes32" },
+          { name: "value", type: "bytes32" },
+        ],
+      },
+      { name: "bulletSignatures", type: "bytes[]" },
+    ],
+    outputs: [],
+    stateMutability: "payable",
+  },
+  {
+    type: "function",
+    name: "resolveTimeoutPenalty",
+    inputs: [
+      { name: "gameId", type: "uint256" },
+      {
+        name: "bulletAttestation",
+        type: "tuple",
+        components: [
+          { name: "handle", type: "bytes32" },
+          { name: "value", type: "bytes32" },
+        ],
+      },
+      { name: "bulletSignatures", type: "bytes[]" },
+    ],
+    outputs: [],
+    stateMutability: "payable",
+  },
+  // ===== Resolution support: FHE fee + pending decryption handles =====
+  {
+    type: "function",
+    name: "getFee",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pendingClaimTypeHandle",
+    inputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "", type: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pendingAllMatchHandle",
+    inputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "", type: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pendingBulletHandle",
+    inputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "", type: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    // Public getter for the Game struct (dynamic `playerAddresses[]` array is
+    // omitted by Solidity's auto-generated getter). `challenger` is index 13.
+    type: "function",
+    name: "games",
+    inputs: [{ name: "", type: "uint256" }],
+    outputs: [
+      { name: "phase", type: "uint8" },
+      { name: "creator", type: "address" },
+      { name: "stakeAmount", type: "uint256" },
+      { name: "stakeToken", type: "address" },
+      { name: "aliveCount", type: "uint8" },
+      { name: "currentPlayerIndex", type: "uint8" },
+      { name: "currentClaimType", type: "uint8" },
+      { name: "lastPlayer", type: "address" },
+      { name: "lastPlayCount", type: "uint8" },
+      { name: "roundNumber", type: "uint256" },
+      { name: "totalPot", type: "uint256" },
+      { name: "winner", type: "address" },
+      { name: "turnDeadline", type: "uint256" },
+      { name: "challenger", type: "address" },
+      { name: "challenged", type: "address" },
+    ],
+    stateMutability: "view",
+  },
   // ===== Gameplay view functions =====
   {
     type: "function",

@@ -95,17 +95,17 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
   }, [gameStarted, router, id]);
 
   const handleStart = () => {
-    // The Inco FHE deal fee scales with the number of cards dealt (≈ per
-    // player): a flat 0.005 covered 2-player games but under-funds 3+ players,
-    // leaving them stuck at "Dealing". We send per-player and the contract
-    // refunds any excess (it takes only what the deal needs).
-    const players = BigInt(Math.max(2, playerCount));
+    // `startGame` is payable with a `refundUnspent` modifier: it forwards the
+    // Inco FHE deal fee and refunds the rest, so a generous flat value is safe
+    // for any player count. (Dealing was never the blocker — the round only
+    // freezes because it must be advanced with resolveRoundStart; see
+    // useResolveGame. Cards are dealt & encrypted inside startGame regardless.)
     writeStart({
       address: CONTRACT_ADDRESS,
       abi: LIARS_BAR_ABI,
       functionName: "startGame",
       args: [gameId],
-      value: parseEther("0.005") * players, // 2p→0.01, 3p→0.015, 5p→0.025; excess refunded
+      value: parseEther("0.01"), // covers the deal for up to MAX_PLAYERS; excess refunded
     });
   };
 
