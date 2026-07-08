@@ -18,11 +18,11 @@ export const config = getDefaultConfig({
   ssr: true,
 });
 
-// After the Inco v1 redeploy, set NEXT_PUBLIC_CONTRACT_ADDRESS in .env.local to
-// the new LiarsBar address. The old 0x781b… deployment is bound to Inco's
-// retired 0.7.x coprocessor and can no longer decrypt/resolve.
+// Inco v1 LiarsBar redeploy on Base Sepolia (verified). The old
+// 0x781b… deployment was bound to Inco's retired 0.7.x coprocessor and can no
+// longer decrypt/resolve. Override with NEXT_PUBLIC_CONTRACT_ADDRESS if needed.
 export const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
-  "0x781b7dc42b116025653ad885c109cc3881fc8372") as `0x${string}`;
+  "0x0f655F0C1dc79cebFaD91135D3a4F31424ED1FA7") as `0x${string}`;
 export const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as const;
 
 export const LIARS_BAR_ABI = [
